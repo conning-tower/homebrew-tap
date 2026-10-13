@@ -10,7 +10,10 @@ class SilentHeritage < Formula
   depends_on "cmake" => :build
   depends_on "ninja" => :build
   depends_on :macos
-  depends_on macos: :ventura
+
+  on_macos do
+    depends_on macos: :ventura
+  end
 
   # SDL at the commit the project's CMakeLists.txt pins, checked out by
   # Homebrew: the build itself downloads nothing.
