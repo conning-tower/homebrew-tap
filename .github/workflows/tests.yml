@@ -1,0 +1,38 @@
+# Checks the formulae on a Mac: audit, then a build from source and its
+# test: of the stable version, and weekly of the development version
+# (--HEAD, SilentHeritage's main branch).
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  silent-heritage:
+    runs-on: macos-15
+    env:
+      HEAD: ${{ github.event_name == 'schedule' && '--HEAD' || '' }}
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Tap this checkout
+        run: |
+          taps="$(brew --repository)/Library/Taps/conning-tower"
+          mkdir -p "${taps}"
+          ln -s "${GITHUB_WORKSPACE}" "${taps}/homebrew-tap"
+      - name: Audit
+        run: brew audit --formula conning-tower/tap/silent-heritage
+      - name: Build from source
+        run: brew install ${HEAD:+"${HEAD}"} --build-from-source --verbose conning-tower/tap/silent-heritage
+      - name: Test
+        run: brew test conning-tower/tap/silent-heritage
