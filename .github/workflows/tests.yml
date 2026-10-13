@@ -1,6 +1,6 @@
-# Checks the formulae on a Mac: audit, then a build from source of the
-# development version (--HEAD) and its test. Weekly too, as --HEAD builds
-# SilentHeritage's main branch.
+# Checks the formulae on a Mac: audit, then a build from source and its
+# test: of the stable version, and weekly of the development version
+# (--HEAD, SilentHeritage's main branch).
 name: tests
 
 on:
@@ -18,6 +18,7 @@ jobs:
   silent-heritage:
     runs-on: macos-15
     env:
+      HEAD: ${{ github.event_name == 'schedule' && '--HEAD' || '' }}
       HOMEBREW_NO_AUTO_UPDATE: "1"
       HOMEBREW_NO_INSTALL_CLEANUP: "1"
     steps:
@@ -32,6 +33,6 @@ jobs:
       - name: Audit
         run: brew audit --formula conning-tower/tap/silent-heritage
       - name: Build from source
-        run: brew install --HEAD --build-from-source --verbose conning-tower/tap/silent-heritage
+        run: brew install ${HEAD:+"${HEAD}"} --build-from-source --verbose conning-tower/tap/silent-heritage
       - name: Test
         run: brew test conning-tower/tap/silent-heritage

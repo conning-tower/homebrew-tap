@@ -4,6 +4,9 @@
 class SilentHeritage < Formula
   desc "Open-source engine for Silent Hunter (1995), played with its original files"
   homepage "https://github.com/conning-tower/SilentHeritage"
+  url "https://github.com/conning-tower/SilentHeritage.git",
+      tag:      "v0.1.1",
+      revision: "6fbeb8d64d3608796133d08167b3212c5ba33106"
   license "MIT"
   head "https://github.com/conning-tower/SilentHeritage.git", branch: "main"
 
